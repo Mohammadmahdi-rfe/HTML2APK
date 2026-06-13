@@ -1,0 +1,23 @@
+# ── Downloaded tools (too large for git — run setup_portable.py to regenerate) ──
+tools/
+
+# ── PyInstaller output ──────────────────────────────────────────────────────────
+dist/
+build/
+*.spec
+
+# ── Python cache ────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ── Temp / logs ─────────────────────────────────────────────────────────────────
+*.tmp
+*.log
+*.apk
+
+# ── OS ──────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
