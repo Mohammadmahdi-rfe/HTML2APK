@@ -1,735 +1,185 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Todo Pro</title>
+<title>My App</title>
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{
-  --bg:#F1F5F9;--card:#fff;--border:#E2E8F0;--text:#1E293B;--muted:#64748B;
-  --inp:#F8FAFC;--accent:#EFF6FF;
-  --p:#6366F1;--pd:#4F46E5;--ok:#10B981;--no:#EF4444;--wn:#F59E0B;
-  --sh1:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
-  --sh2:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.05);
-  --sh3:0 8px 24px rgba(0,0,0,.10),0 4px 8px rgba(0,0,0,.06);
-}
-[data-theme="dark"]{
-  --bg:#0F172A;--card:#1E293B;--border:#334155;--text:#F1F5F9;--muted:#94A3B8;
-  --inp:#0F172A;--accent:#1E3A5F;
-}
-body{font-family:'Segoe UI',Tahoma,system-ui,sans-serif;background:var(--bg);color:var(--text);
-  min-height:100vh;max-width:480px;margin:0 auto;transition:background .25s,color .25s}
-
-/* HEADER */
-.hdr{background:linear-gradient(135deg,#5B5EF0 0%,#7C3AED 55%,#A855F7 100%);
-  padding:18px 18px 40px;position:relative;overflow:hidden}
-.hdr::before{content:'';position:absolute;width:260px;height:260px;border-radius:50%;
-  background:rgba(255,255,255,.06);top:-80px;left:-60px;pointer-events:none}
-.hdr::after{content:'';position:absolute;width:160px;height:160px;border-radius:50%;
-  background:rgba(255,255,255,.04);bottom:-40px;right:-20px;pointer-events:none}
-.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;
-  margin-bottom:20px;position:relative;z-index:1}
-.hdr-title{font-size:20px;font-weight:700;color:#fff}
-.hdr-greet{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px}
-.hdr-date{font-size:11px;color:rgba(255,255,255,.6);margin-top:1px}
-.hdr-btns{display:flex;gap:7px;align-items:center}
-.hdr-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);
-  border:none;color:#fff;cursor:pointer;font-size:16px;
-  display:flex;align-items:center;justify-content:center;transition:background .15s}
-.hdr-btn:active{background:rgba(255,255,255,.35);transform:scale(.9)}
-.net-chip{display:none;position:absolute;bottom:14px;left:18px;
-  font-size:10px;background:rgba(255,255,255,.2);color:rgba(255,255,255,.9);
-  padding:3px 9px;border-radius:99px;z-index:2}
-.hdr-stats{display:flex;gap:8px;align-items:center;position:relative;z-index:1}
-.ring-wrap{position:relative;width:72px;height:72px;flex-shrink:0}
-.ring-wrap svg{width:100%;height:100%}
-.ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;color:#fff}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:1}
-.stat-box{background:rgba(255,255,255,.18);border-radius:10px;padding:8px 10px;
-  text-align:center;backdrop-filter:blur(4px)}
-.stat-n{font-size:20px;font-weight:700;color:#fff}
-.stat-l{font-size:10px;color:rgba(255,255,255,.75);margin-top:1px}
-
-/* ADD CARD */
-.add-card{background:var(--card);margin:-22px 14px 14px;border-radius:18px;
-  padding:16px;box-shadow:var(--sh3);position:relative;z-index:10;transition:background .25s}
-.add-main-row{display:flex;gap:8px;margin-bottom:11px}
-.add-inp{flex:1;border:1.5px solid var(--border);border-radius:11px;padding:11px 14px;
-  font-size:14px;font-family:inherit;direction:rtl;outline:none;
-  color:var(--text);background:var(--inp);transition:border-color .2s,background .25s}
-.add-inp::placeholder{color:var(--muted)}
-.add-inp:focus{border-color:var(--p);background:var(--card)}
-.add-inp.shake{animation:shake .3s ease;border-color:var(--no)!important}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-.add-btn{width:44px;height:44px;background:linear-gradient(135deg,var(--p),#7C3AED);
-  color:#fff;border:none;border-radius:11px;font-size:24px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  box-shadow:0 2px 8px rgba(99,102,241,.4);transition:opacity .15s,transform .1s}
-.add-btn:active{transform:scale(.9);opacity:.85}
-.seg-row{display:flex;gap:6px;margin-bottom:8px}
-.seg-btn{flex:1;padding:7px 4px;border:1.5px solid var(--border);border-radius:9px;
-  background:var(--card);font-size:12px;font-family:inherit;cursor:pointer;
-  color:var(--muted);transition:all .15s;text-align:center;white-space:nowrap}
-.seg-btn.s-low{background:#F0FDF4;border-color:var(--ok);color:var(--ok);font-weight:600}
-.seg-btn.s-med{background:#FFFBEB;border-color:var(--wn);color:#D97706;font-weight:600}
-.seg-btn.s-high{background:#FEF2F2;border-color:var(--no);color:var(--no);font-weight:600}
-.cat-scroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:8px;scrollbar-width:none}
-.cat-scroll::-webkit-scrollbar{display:none}
-.cat-chip{flex-shrink:0;padding:5px 10px;border-radius:99px;border:1.5px solid var(--border);
-  background:var(--card);font-size:12px;cursor:pointer;font-family:inherit;
-  color:var(--muted);transition:all .15s;white-space:nowrap}
-.cat-chip.sel{font-weight:600}
-.add-extras{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:2px}
-.xtra-btn{font-size:11px;color:var(--muted);background:var(--accent);border:none;
-  padding:6px 10px;border-radius:7px;cursor:pointer;font-family:inherit;
-  transition:all .15s;display:flex;align-items:center;gap:3px}
-.xtra-btn.on{color:var(--p);font-weight:600}
-.due-inp{border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;
-  font-size:12px;font-family:inherit;color:var(--text);background:var(--inp);outline:none}
-.due-inp:focus{border-color:var(--p)}
-.note-row{width:100%;margin-top:9px}
-.note-ta{width:100%;border:1.5px solid var(--border);border-radius:9px;
-  padding:9px 12px;font-size:13px;font-family:inherit;direction:rtl;
-  outline:none;color:var(--text);background:var(--inp);resize:none;height:70px;
-  transition:border-color .2s,background .25s}
-.note-ta:focus{border-color:var(--p);background:var(--card)}
-
-/* PROGRESS */
-.prog{padding:0 14px 12px}
-.prog-info{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px}
-.prog-track{height:7px;background:var(--border);border-radius:99px;overflow:hidden}
-.prog-bar{height:100%;background:linear-gradient(90deg,var(--p),var(--ok));
-  border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);min-width:0}
-
-/* FILTER */
-.filter{padding:0 14px 12px}
-.srch-wrap{position:relative;margin-bottom:9px}
-.srch-inp{width:100%;border:1.5px solid var(--border);border-radius:11px;
-  padding:9px 40px 9px 36px;font-size:13px;font-family:inherit;direction:rtl;
-  outline:none;background:var(--card);color:var(--text);
-  transition:border-color .2s,background .25s;-webkit-appearance:none;appearance:none}
-.srch-inp:focus{border-color:var(--p)}
-.srch-ico{position:absolute;right:13px;top:50%;transform:translateY(-50%);
-  font-size:14px;pointer-events:none}
-.srch-clr{position:absolute;left:10px;top:50%;transform:translateY(-50%);
-  background:var(--border);border:none;border-radius:50%;width:18px;height:18px;
-  font-size:10px;cursor:pointer;color:var(--muted);
-  display:none;align-items:center;justify-content:center}
-.srch-clr.show{display:flex}
-.f-tabs{display:flex;background:var(--card);border-radius:11px;padding:3px;
-  border:1px solid var(--border);gap:2px;margin-bottom:9px;transition:background .25s}
-.f-tab{flex:1;padding:8px 4px;border:none;background:none;border-radius:8px;
-  font-size:12px;font-family:inherit;cursor:pointer;color:var(--muted);
-  transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px}
-.f-tab.on{background:var(--p);color:#fff;font-weight:600}
-.f-cnt{font-size:10px;background:var(--border);color:var(--muted);
-  border-radius:99px;padding:0 5px;min-width:16px;text-align:center}
-.f-tab.on .f-cnt{background:rgba(255,255,255,.25);color:#fff}
-.cf-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
-.cf-row::-webkit-scrollbar{display:none}
-.cf-chip{flex-shrink:0;padding:5px 10px;border-radius:99px;border:1.5px solid var(--border);
-  background:var(--card);font-size:11px;cursor:pointer;font-family:inherit;
-  color:var(--muted);transition:all .15s;white-space:nowrap}
-.cf-chip.on{font-weight:600}
-
-/* LIST */
-.lst{padding:0 14px}
-.lst-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
-.lst-lbl{font-size:13px;font-weight:600;color:var(--muted)}
-.lst-acts{display:flex;gap:5px}
-.lst-btn{font-size:11px;color:var(--muted);background:var(--card);
-  border:1px solid var(--border);padding:5px 9px;border-radius:7px;
-  cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
-.lst-btn:hover{border-color:var(--p);color:var(--p)}
-.lst-btn.d:hover{background:#FEF2F2;border-color:var(--no);color:var(--no)}
-.sort-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.sort-lbl{font-size:12px;color:var(--muted);white-space:nowrap}
-.sort-sel{flex:1;background:var(--card);border:1.5px solid var(--border);
-  border-radius:8px;padding:6px 10px;font-size:12px;font-family:inherit;
-  color:var(--text);outline:none;cursor:pointer;transition:background .25s,color .25s}
-.todo-list{display:flex;flex-direction:column;gap:8px}
-
-/* TODO ITEM */
-.todo-item{background:var(--card);border-radius:14px;border:1px solid var(--border);
-  border-right:4px solid transparent;box-shadow:var(--sh1);
-  transition:opacity .25s,background .25s;animation:fsIn .22s ease-out;overflow:hidden}
-.todo-item[data-p="high"]{border-right-color:var(--no)}
-.todo-item[data-p="medium"]{border-right-color:var(--wn)}
-.todo-item[data-p="low"]{border-right-color:var(--ok)}
-.todo-item.done{opacity:.52}
-.todo-item.rm{animation:rmOut .25s ease-out forwards}
-@keyframes fsIn{from{opacity:0;transform:translateY(-10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes rmOut{to{opacity:0;transform:scale(.95) translateX(8px);max-height:0;border-width:0;padding:0}}
-.ti{padding:13px 12px}
-.ti-main{display:flex;align-items:flex-start;gap:11px}
-.chk{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);
-  background:var(--card);cursor:pointer;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s;margin-top:1px;font-size:0}
-.chk.on{background:var(--ok);border-color:var(--ok)}
-.chk.on::after{content:'✓';font-size:13px;font-weight:700;color:#fff}
-.ti-body{flex:1;min-width:0}
-.ti-txt{font-size:14px;font-weight:500;color:var(--text);word-break:break-word;line-height:1.45}
-.done .ti-txt{text-decoration:line-through;color:var(--muted)}
-.ti-meta{display:flex;align-items:center;gap:5px;margin-top:6px;flex-wrap:wrap}
-.mc{font-size:10px;padding:2px 7px;border-radius:99px;font-weight:500;
-  display:flex;align-items:center;gap:3px;white-space:nowrap}
-.mc-hp{background:#FEF2F2;color:var(--no)}
-.mc-mp{background:#FFFBEB;color:#D97706}
-.mc-lp{background:#F0FDF4;color:var(--ok)}
-.mc-t{background:none;color:var(--muted);padding:0;font-size:10px}
-.mc-due{background:#F0FDF4;color:var(--ok)}
-.mc-due.ov{background:#FEF2F2;color:var(--no)}
-.mc-due.td{background:#FFFBEB;color:#D97706}
-.ti-note{max-height:0;overflow:hidden;
-  transition:max-height .3s ease,opacity .2s ease,margin .3s ease,padding .3s ease;
-  opacity:0;margin-top:0;padding-top:0;
-  font-size:12px;color:var(--muted);line-height:1.5;
-  border-top:0px solid var(--border)}
-.ti-note.open{max-height:200px;opacity:1;margin-top:8px;padding-top:8px;border-top-width:1px}
-.ti-acts{display:flex;gap:2px;flex-shrink:0}
-.a-btn{width:30px;height:30px;border:none;border-radius:8px;background:transparent;
-  cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;
-  transition:background .15s,transform .1s;opacity:.55}
-.a-btn:hover{opacity:1;background:var(--accent)}
-.a-btn:active{transform:scale(.82)}
-.a-btn.dl:hover{background:#FEF2F2;opacity:1}
-.a-btn.nt{opacity:1}
-
-/* EDIT FORM */
-.ef{padding:14px 12px;display:flex;flex-direction:column;gap:9px}
-.ef-inp{width:100%;border:1.5px solid var(--p);border-radius:10px;
-  padding:10px 13px;font-size:14px;font-family:inherit;direction:rtl;
-  outline:none;color:var(--text);background:var(--inp)}
-.ef-ta{width:100%;border:1.5px solid var(--border);border-radius:9px;
-  padding:8px 12px;font-size:12px;font-family:inherit;direction:rtl;
-  outline:none;color:var(--text);background:var(--inp);resize:none;height:60px;
-  transition:border-color .2s}
-.ef-ta:focus{border-color:var(--p)}
-.ef-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ef-lbl{font-size:11px;color:var(--muted);white-space:nowrap}
-.ef-segs{display:flex;gap:5px}
-.ef-seg{flex:1;padding:6px 4px;border:1.5px solid var(--border);border-radius:7px;
-  background:var(--card);font-size:11px;font-family:inherit;cursor:pointer;
-  color:var(--muted);transition:all .15s;text-align:center;white-space:nowrap}
-.ef-seg.s-low{background:#F0FDF4;border-color:var(--ok);color:var(--ok);font-weight:600}
-.ef-seg.s-med{background:#FFFBEB;border-color:var(--wn);color:#D97706;font-weight:600}
-.ef-seg.s-high{background:#FEF2F2;border-color:var(--no);color:var(--no);font-weight:600}
-.ef-cats{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;flex:1}
-.ef-cats::-webkit-scrollbar{display:none}
-.ef-cat{flex-shrink:0;padding:4px 8px;border-radius:99px;border:1.5px solid var(--border);
-  background:var(--card);font-size:11px;font-family:inherit;cursor:pointer;
-  color:var(--muted);transition:all .15s;white-space:nowrap}
-.ef-cat.on{border-color:var(--p);color:var(--p);background:var(--accent);font-weight:600}
-.ef-due{border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;
-  font-size:12px;font-family:inherit;color:var(--text);background:var(--inp);outline:none}
-.ef-btns{display:flex;gap:7px}
-.ef-save{flex:1;padding:10px;background:var(--p);color:#fff;border:none;
-  border-radius:9px;font-size:13px;font-family:inherit;cursor:pointer;font-weight:600;
-  transition:opacity .15s}
-.ef-save:active{opacity:.8}
-.ef-cancel{padding:10px 16px;background:var(--accent);color:var(--muted);
-  border:none;border-radius:9px;font-size:13px;font-family:inherit;cursor:pointer}
-
-/* EMPTY */
-.empty{text-align:center;padding:50px 24px;color:var(--muted)}
-.em-ico{font-size:54px;margin-bottom:14px}
-.em-ttl{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
-.em-sub{font-size:13px}
-
-/* DEVICE BAR */
-.dev-bar{display:none;margin:12px 14px 0;padding:9px 13px;background:var(--card);
-  border-radius:10px;border:1px solid var(--border);font-size:11px;color:var(--muted);
-  gap:12px;flex-wrap:wrap;align-items:center;transition:background .25s}
-.pad{height:40px}
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0f172a;
+    color: #f1f5f9;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    gap: 24px;
+  }
+  .logo {
+    font-size: 64px;
+    filter: drop-shadow(0 0 20px rgba(99,102,241,.6));
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #818cf8, #a78bfa, #38bdf8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+  }
+  p.sub {
+    font-size: 14px;
+    color: #94a3b8;
+    text-align: center;
+    line-height: 1.6;
+    max-width: 300px;
+  }
+  .btn-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 340px;
+  }
+  button {
+    padding: 14px 10px;
+    border: none;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .12s, opacity .12s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  button:active { transform: scale(.93); opacity: .85; }
+  button span.icon { font-size: 24px; }
+  .btn-toast    { background: #6366f1; color: #fff; }
+  .btn-vibrate  { background: #8b5cf6; color: #fff; }
+  .btn-copy     { background: #0ea5e9; color: #fff; }
+  .btn-network  { background: #10b981; color: #fff; }
+  .btn-device   { background: #f59e0b; color: #fff; }
+  .btn-theme    { background: #334155; color: #f1f5f9; }
+  .output {
+    width: 100%;
+    max-width: 340px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: #94a3b8;
+    min-height: 52px;
+    line-height: 1.7;
+    word-break: break-all;
+  }
+  .output strong { color: #818cf8; }
 </style>
 </head>
 <body>
 
-<div class="hdr">
-  <span class="net-chip" id="netChip"></span>
-  <div class="hdr-top">
-    <div>
-      <div class="hdr-title">📋 Todo Pro</div>
-      <div class="hdr-greet" id="hdrGreet"></div>
-      <div class="hdr-date"  id="hdrDate"></div>
-    </div>
-    <div class="hdr-btns">
-      <button class="hdr-btn" id="darkBtn" onclick="toggleDark()" title="تغییر تم">🌙</button>
-    </div>
-  </div>
-  <div class="hdr-stats">
-    <div class="ring-wrap">
-      <svg viewBox="0 0 36 36">
-        <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2.8"/>
-        <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2.8"
-          stroke-dasharray="0 100" stroke-linecap="round"
-          transform="rotate(-90 18 18)" id="ringPath"/>
-      </svg>
-      <div class="ring-pct" id="ringPct">۰٪</div>
-    </div>
-    <div class="stat-grid">
-      <div class="stat-box"><div class="stat-n" id="sAll">0</div><div class="stat-l">کل</div></div>
-      <div class="stat-box"><div class="stat-n" id="sDone">0</div><div class="stat-l">انجام‌شده</div></div>
-      <div class="stat-box"><div class="stat-n" id="sLeft">0</div><div class="stat-l">باقیمانده</div></div>
-      <div class="stat-box"><div class="stat-n" id="sHigh">0</div><div class="stat-l">فوری</div></div>
-    </div>
-  </div>
+<div class="logo">⚡</div>
+<h1>HTML2APK Studio</h1>
+<p class="sub">Replace this file with your own <strong>index.html</strong> to build your app.</p>
+
+<div class="btn-grid">
+  <button class="btn-toast"   onclick="doToast()">
+    <span class="icon">💬</span>Toast
+  </button>
+  <button class="btn-vibrate" onclick="doVibrate()">
+    <span class="icon">📳</span>Vibrate
+  </button>
+  <button class="btn-copy"    onclick="doCopy()">
+    <span class="icon">📋</span>Clipboard
+  </button>
+  <button class="btn-network" onclick="doNetwork()">
+    <span class="icon">📶</span>Network
+  </button>
+  <button class="btn-device"  onclick="doDevice()">
+    <span class="icon">📱</span>Device Info
+  </button>
+  <button class="btn-theme"   onclick="doTheme()">
+    <span class="icon">🌙</span>Theme
+  </button>
 </div>
 
-<div class="add-card">
-  <div class="add-main-row">
-    <input type="text" class="add-inp" id="addInp" placeholder="وظیفه جدید اضافه کن..."
-           onkeydown="if(event.key==='Enter')addTodo()">
-    <button class="add-btn" onclick="addTodo()">+</button>
-  </div>
-  <div class="seg-row" id="priRow"></div>
-  <div class="cat-scroll" id="catRow"></div>
-  <div class="add-extras">
-    <button class="xtra-btn" id="dueBtn" onclick="toggleDue()">📅 سررسید</button>
-    <input type="date" class="due-inp" id="addDue" style="display:none">
-    <button class="xtra-btn" id="noteBtn" onclick="toggleNote_add()">📝 یادداشت</button>
-  </div>
-  <div class="note-row" id="noteRow" style="display:none">
-    <textarea class="note-ta" id="addNote" placeholder="یادداشت اختیاری..."></textarea>
-  </div>
+<div class="output" id="out">
+  Tap a button to test the JS Bridge →
 </div>
-
-<div class="prog">
-  <div class="prog-info"><span>پیشرفت کلی</span><span id="progPct">۰٪</span></div>
-  <div class="prog-track"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
-</div>
-
-<div class="filter">
-  <div class="srch-wrap">
-    <input type="search" class="srch-inp" id="srchInp"
-           placeholder="جستجو در وظایف و یادداشت‌ها..." oninput="onSearch()">
-    <span class="srch-ico">🔍</span>
-    <button class="srch-clr" id="srchClr" onclick="clearSearch()">✕</button>
-  </div>
-  <div class="f-tabs">
-    <button class="f-tab on" data-f="all"       onclick="setFilter('all')">همه <span class="f-cnt" id="fc0">0</span></button>
-    <button class="f-tab"    data-f="active"    onclick="setFilter('active')">فعال <span class="f-cnt" id="fc1">0</span></button>
-    <button class="f-tab"    data-f="completed" onclick="setFilter('completed')">انجام‌شده <span class="f-cnt" id="fc2">0</span></button>
-  </div>
-  <div class="cf-row" id="cfRow"></div>
-</div>
-
-<div class="lst">
-  <div class="lst-hdr">
-    <span class="lst-lbl" id="lstLbl">وظایف</span>
-    <div class="lst-acts">
-      <button class="lst-btn" onclick="markAllDone()">✓ همه</button>
-      <button class="lst-btn d" onclick="clearDone()">🗑 انجام‌شده‌ها</button>
-    </div>
-  </div>
-  <div class="sort-row">
-    <span class="sort-lbl">مرتب‌سازی:</span>
-    <select class="sort-sel" id="sortSel" onchange="setSort(this.value)">
-      <option value="pri">اولویت</option>
-      <option value="date">تاریخ اضافه‌شدن</option>
-      <option value="due">سررسید</option>
-      <option value="alpha">الفبا</option>
-    </select>
-  </div>
-  <div class="todo-list" id="todoList"></div>
-</div>
-
-<div class="dev-bar" id="devBar">
-  <span id="devMdl">📱 ——</span>
-  <span id="devOS">🤖 ——</span>
-</div>
-<div class="pad"></div>
 
 <script>
-var CATS={
-  personal:{icon:'🏠',label:'شخصی',  color:'#8B5CF6'},
-  work:    {icon:'💼',label:'کار',    color:'#3B82F6'},
-  shopping:{icon:'🛒',label:'خرید',   color:'#10B981'},
-  health:  {icon:'💪',label:'سلامتی', color:'#EF4444'},
-  study:   {icon:'📚',label:'مطالعه', color:'#F59E0B'},
-  other:   {icon:'⭐',label:'سایر',   color:'#6366F1'}
-};
-var PRIS={
-  high:  {icon:'🔴',label:'زیاد',  cls:'s-high',ef:'s-high',mc:'mc-hp',ord:0},
-  medium:{icon:'🟡',label:'متوسط', cls:'s-med', ef:'s-med', mc:'mc-mp',ord:1},
-  low:   {icon:'🟢',label:'کم',    cls:'s-low', ef:'s-low', mc:'mc-lp',ord:2}
-};
-var CK=Object.keys(CATS), PK=Object.keys(PRIS);
+var dark = false;
 
-// State
-var todos=[], filter='all', catFilt='all', sortBy='pri', addPri='medium', addCat='personal', isDark=false, openNotes={};
-try{todos=JSON.parse(localStorage.getItem('tp3')||'[]')}catch(e){}
-try{isDark=localStorage.getItem('tp3_dk')==='1'}catch(e){}
-try{sortBy=localStorage.getItem('tp3_sort')||'pri'}catch(e){}
-
-function save(){localStorage.setItem('tp3',JSON.stringify(todos))}
-function find(id){return todos.find(function(t){return t.id===id})}
-function gid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
-
-// Dark mode
-function toggleDark(){
-  isDark=!isDark;
-  localStorage.setItem('tp3_dk',isDark?'1':'0');
-  applyTheme();
-  if(window.html2apk) html2apk.vibrate(15);
-}
-function applyTheme(){
-  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
-  document.getElementById('darkBtn').textContent=isDark?'☀️':'🌙';
+function log(msg) {
+  document.getElementById('out').innerHTML = msg;
 }
 
-// Add form: priority
-function setPri(p){
-  addPri=p;
-  document.querySelectorAll('#priRow .seg-btn').forEach(function(b){
-    b.className='seg-btn'+(b.dataset.p===p?' '+PRIS[p].cls:'');
-  });
-}
-
-// Add form: category
-function setCat(c){
-  addCat=c;
-  document.querySelectorAll('#catRow .cat-chip').forEach(function(b){
-    var isSel=b.dataset.c===c;
-    b.classList.toggle('sel',isSel);
-    b.style.borderColor=isSel?CATS[c].color:'';
-    b.style.color=isSel?CATS[c].color:'';
-  });
-}
-
-// Due date toggle
-function toggleDue(){
-  var inp=document.getElementById('addDue'), btn=document.getElementById('dueBtn');
-  var shown=inp.style.display!=='none';
-  inp.style.display=shown?'none':'inline-block';
-  btn.classList.toggle('on',!shown);
-  if(!shown){inp.focus()}else{inp.value=''}
-}
-
-// Note toggle (add form)
-function toggleNote_add(){
-  var row=document.getElementById('noteRow'), btn=document.getElementById('noteBtn');
-  var shown=row.style.display!=='none';
-  row.style.display=shown?'none':'block';
-  btn.classList.toggle('on',!shown);
-  if(!shown) document.getElementById('addNote').focus();
-}
-
-// Add todo
-function addTodo(){
-  var inp=document.getElementById('addInp'), text=inp.value.trim();
-  if(!text){
-    inp.classList.add('shake');
-    setTimeout(function(){inp.classList.remove('shake')},350);
-    if(window.html2apk) html2apk.vibrate(30);
-    return;
-  }
-  var dueEl=document.getElementById('addDue'), noteEl=document.getElementById('addNote');
-  todos.unshift({
-    id:gid(), text:text, note:noteEl.value.trim(),
-    pri:addPri, cat:addCat,
-    due:dueEl.style.display!=='none'?dueEl.value:'',
-    done:false, at:Date.now()
-  });
-  save(); inp.value=''; noteEl.value=''; dueEl.value='';
-  render();
-  if(window.html2apk){
-    html2apk.vibrate(25);
-    html2apk.toast.show('✅ '+text.slice(0,22)+' افزوده شد');
+function doToast() {
+  if (window.H2ABridge) {
+    H2ABridge.call('toast', { message: 'Hello from HTML2APK! 👋' });
+    log('<strong>toast</strong> → "Hello from HTML2APK! 👋"');
+  } else {
+    log('<strong>toast</strong> → (only works inside APK)');
   }
 }
 
-// Toggle done
-function toggle(id){
-  var t=find(id); if(!t) return;
-  t.done=!t.done; save(); render();
-  if(window.html2apk){
-    html2apk.vibrate(t.done?65:20);
-    if(t.done) html2apk.toast.show('✔ انجام شد!');
+function doVibrate() {
+  if (window.H2ABridge) {
+    H2ABridge.call('vibration', { duration: 300 });
+    log('<strong>vibration</strong> → 300ms');
+  } else {
+    log('<strong>vibration</strong> → (only works inside APK)');
   }
 }
 
-// Delete with animation
-function del(id){
-  var el=document.querySelector('[data-id="'+id+'"]');
-  function go(){
-    todos=todos.filter(function(x){return x.id!==id});
-    delete openNotes[id]; save(); render();
-    if(window.html2apk) html2apk.toast.show('🗑 حذف شد');
+function doCopy() {
+  var text = 'Built with HTML2APK Studio 🚀';
+  if (window.H2ABridge) {
+    H2ABridge.call('clipboard', { action: 'copy', text: text }, function(r) {
+      log('<strong>clipboard</strong> → copied: "' + text + '"');
+    });
+  } else {
+    log('<strong>clipboard</strong> → (only works inside APK)');
   }
-  if(el){el.classList.add('rm');setTimeout(go,260)}else{go()}
 }
 
-// Note toggle (item)
-function toggleNoteItem(id){
-  openNotes[id]=!openNotes[id];
-  var el=document.getElementById('nt-'+id), btn=document.getElementById('nb-'+id);
-  if(el) el.classList.toggle('open',!!openNotes[id]);
-  if(btn) btn.classList.toggle('nt',!!openNotes[id]);
-}
-
-// Copy
-function cpy(id){
-  var t=find(id); if(!t) return;
-  if(window.html2apk){
-    html2apk.clipboard.copy(t.text,function(){html2apk.toast.show('📋 کپی شد')});
-  }else if(navigator.clipboard){navigator.clipboard.writeText(t.text)}
-}
-
-// Edit
-function startEdit(id){
-  var el=document.querySelector('[data-id="'+id+'"]'), t=find(id);
-  if(!el||!t) return;
-  var pBtns=PK.map(function(k){
-    return '<button class="ef-seg'+( t.pri===k?' '+PRIS[k].ef:'')+'" data-ep="'+k+'" onclick="setEP(this,\''+k+'\',\''+id+'\')">'
-      +PRIS[k].icon+' '+PRIS[k].label+'</button>';
-  }).join('');
-  var cBtns=CK.map(function(k){
-    return '<button class="ef-cat'+(t.cat===k?' on':'')+'" data-ec="'+k+'" onclick="setEC(this,\''+k+'\',\''+id+'\')">'
-      +CATS[k].icon+' '+CATS[k].label+'</button>';
-  }).join('');
-  el.innerHTML=
-    '<div class="ef">'+
-      '<input class="ef-inp" id="ei-'+id+'" value="'+ea(t.text)+'">'+
-      '<textarea class="ef-ta" id="en-'+id+'" placeholder="یادداشت...">'+esc(t.note||'')+'</textarea>'+
-      '<div class="ef-row"><span class="ef-lbl">اولویت:</span><div class="ef-segs" id="eps-'+id+'">'+pBtns+'</div></div>'+
-      '<div class="ef-row"><span class="ef-lbl">دسته:</span><div class="ef-cats" id="ecs-'+id+'">'+cBtns+'</div></div>'+
-      '<div class="ef-row"><span class="ef-lbl">📅 سررسید:</span>'+
-        '<input type="date" class="ef-due" id="edu-'+id+'" value="'+(t.due||'')+'"></div>'+
-      '<div class="ef-btns">'+
-        '<button class="ef-save" onclick="saveEdit(\''+id+'\')">💾 ذخیره</button>'+
-        '<button class="ef-cancel" onclick="render()">لغو</button>'+
-      '</div>'+
-    '</div>';
-  setTimeout(function(){var i=document.getElementById('ei-'+id);if(i)i.focus()},50);
-}
-
-function setEP(btn,p,id){
-  var row=document.getElementById('eps-'+id); if(!row) return;
-  row.querySelectorAll('.ef-seg').forEach(function(b){
-    b.className='ef-seg'+(b===btn?' '+PRIS[p].ef:'');
-  });
-}
-function setEC(btn,c,id){
-  var row=document.getElementById('ecs-'+id); if(!row) return;
-  row.querySelectorAll('.ef-cat').forEach(function(b){b.classList.toggle('on',b===btn)});
-}
-
-function saveEdit(id){
-  var el=document.querySelector('[data-id="'+id+'"]'), t=find(id);
-  if(!el||!t) return;
-  var txt=document.getElementById('ei-'+id).value.trim();
-  if(txt) t.text=txt;
-  t.note=document.getElementById('en-'+id).value.trim();
-  t.due=document.getElementById('edu-'+id).value;
-  var sp=el.querySelector('.ef-seg.s-high,.ef-seg.s-med,.ef-seg.s-low');
-  if(sp) t.pri=sp.dataset.ep;
-  var sc=el.querySelector('.ef-cat.on');
-  if(sc) t.cat=sc.dataset.ec;
-  save(); render();
-  if(window.html2apk) html2apk.toast.show('💾 ذخیره شد');
-}
-
-// Clear / markAll
-function clearDone(){
-  var n=todos.filter(function(t){return t.done}).length; if(!n) return;
-  todos=todos.filter(function(t){return!t.done}); save(); render();
-  if(window.html2apk) html2apk.toast.show(n+' مورد پاک شد','long');
-}
-function markAllDone(){
-  var active=todos.filter(function(t){return!t.done}); if(!active.length) return;
-  active.forEach(function(t){t.done=true}); save(); render();
-  if(window.html2apk){html2apk.vibrate(80);html2apk.toast.show('✅ همه انجام شد!')}
-}
-
-// Filter / sort
-function setFilter(f){
-  filter=f;
-  document.querySelectorAll('.f-tab').forEach(function(b){b.classList.toggle('on',b.dataset.f===f)});
-  render();
-}
-function setCatFilter(c){
-  catFilt=c;
-  document.querySelectorAll('.cf-chip').forEach(function(ch){
-    var isSel=ch.dataset.cf===c;
-    ch.classList.toggle('on',isSel);
-    ch.style.borderColor=isSel&&c!=='all'?CATS[c].color:'';
-    ch.style.color=isSel&&c!=='all'?CATS[c].color:'';
-  });
-  render();
-}
-function setSort(s){sortBy=s;localStorage.setItem('tp3_sort',s);render()}
-function onSearch(){
-  var q=document.getElementById('srchInp').value;
-  document.getElementById('srchClr').classList.toggle('show',q.length>0);
-  render();
-}
-function clearSearch(){
-  document.getElementById('srchInp').value='';
-  document.getElementById('srchClr').classList.remove('show');
-  render();
-}
-
-// Render
-function render(){
-  var q=(document.getElementById('srchInp').value||'').trim().toLowerCase();
-  var doneN=todos.filter(function(t){return t.done}).length;
-  var actN=todos.length-doneN;
-  var highN=todos.filter(function(t){return!t.done&&t.pri==='high'}).length;
-  var pct=todos.length?Math.round(doneN/todos.length*100):0;
-
-  document.getElementById('sAll').textContent=todos.length;
-  document.getElementById('sDone').textContent=doneN;
-  document.getElementById('sLeft').textContent=actN;
-  document.getElementById('sHigh').textContent=highN;
-  document.getElementById('ringPath').setAttribute('stroke-dasharray',pct+' 100');
-  document.getElementById('ringPct').textContent=toFa(pct)+'٪';
-  document.getElementById('progBar').style.width=pct+'%';
-  document.getElementById('progPct').textContent=toFa(pct)+'٪';
-  document.getElementById('fc0').textContent=todos.length;
-  document.getElementById('fc1').textContent=actN;
-  document.getElementById('fc2').textContent=doneN;
-
-  var show=todos.filter(function(t){
-    if(filter==='active'&&t.done) return false;
-    if(filter==='completed'&&!t.done) return false;
-    if(catFilt!=='all'&&t.cat!==catFilt) return false;
-    if(q&&t.text.toLowerCase().indexOf(q)===-1&&(!t.note||t.note.toLowerCase().indexOf(q)===-1)) return false;
-    return true;
-  }).slice().sort(function(a,b){
-    if(a.done!==b.done) return a.done?1:-1;
-    if(sortBy==='pri') return PRIS[a.pri].ord-PRIS[b.pri].ord;
-    if(sortBy==='date') return b.at-a.at;
-    if(sortBy==='due'){var da=a.due||'9999',db=b.due||'9999';return da<db?-1:da>db?1:0}
-    if(sortBy==='alpha') return a.text.localeCompare(b.text,'fa');
-    return 0;
-  });
-
-  var LMAP={all:'همه وظایف',active:'وظایف فعال',completed:'انجام‌شده‌ها'};
-  document.getElementById('lstLbl').textContent=LMAP[filter]+' ('+show.length+')';
-
-  var list=document.getElementById('todoList');
-  if(!show.length){
-    var em=emptyMsg(q);
-    list.innerHTML='<div class="empty"><div class="em-ico">'+em[0]+'</div><div class="em-ttl">'+em[1]+'</div><div class="em-sub">'+em[2]+'</div></div>';
-    return;
+function doNetwork() {
+  if (window.H2ABridge) {
+    H2ABridge.call('network', { action: 'status' }, function(r) {
+      log('<strong>network</strong> → connected: ' + r.connected + '<br>type: ' + r.type);
+    });
+  } else {
+    log('<strong>network</strong> → (only works inside APK)');
   }
-  list.innerHTML=show.map(renderItem).join('');
-  // restore note state
-  Object.keys(openNotes).forEach(function(id){
-    if(openNotes[id]){var el=document.getElementById('nt-'+id);if(el) el.classList.add('open')}
-  });
 }
 
-function renderItem(t){
-  var cat=CATS[t.cat]||CATS.other, pr=PRIS[t.pri], due=fmtDue(t.due);
-  var bgAlpha=isDark?.22:.12;
-  var r=parseInt(cat.color.slice(1,3),16),g=parseInt(cat.color.slice(3,5),16),b=parseInt(cat.color.slice(5,7),16);
-  var catBg='rgba('+r+','+g+','+b+','+bgAlpha+')';
-  var meta=
-    '<span class="mc '+pr.mc+'">'+pr.icon+' '+pr.label+'</span>'+
-    '<span class="mc" style="background:'+catBg+';color:'+cat.color+'">'+cat.icon+' '+cat.label+'</span>'+
-    (due?'<span class="mc mc-due '+due.cls+'">📅 '+due.text+'</span>':'')+
-    '<span class="mc mc-t">'+fmtShort(t.at)+'</span>';
-  var noteHTML=t.note?'<div class="ti-note" id="nt-'+t.id+'">'+esc(t.note)+'</div>':'';
-  var noteBtn=t.note?'<button class="a-btn nt" id="nb-'+t.id+'" onclick="toggleNoteItem(\''+t.id+'\')" title="یادداشت">📝</button>':'';
-  return(
-    '<div class="todo-item'+(t.done?' done':'')+'" data-p="'+t.pri+'" data-id="'+t.id+'">'+
-      '<div class="ti">'+
-        '<div class="ti-main">'+
-          '<button class="chk'+(t.done?' on':'')+'" onclick="toggle(\''+t.id+'\')"></button>'+
-          '<div class="ti-body">'+
-            '<div class="ti-txt">'+esc(t.text)+'</div>'+
-            '<div class="ti-meta">'+meta+'</div>'+
-            noteHTML+
-          '</div>'+
-          '<div class="ti-acts">'+
-            noteBtn+
-            '<button class="a-btn" onclick="startEdit(\''+t.id+'\')" title="ویرایش">✏️</button>'+
-            '<button class="a-btn" onclick="cpy(\''+t.id+'\')" title="کپی">📋</button>'+
-            '<button class="a-btn dl" onclick="del(\''+t.id+'\')" title="حذف">🗑️</button>'+
-          '</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>'
-  );
+function doDevice() {
+  if (window.H2ABridge) {
+    H2ABridge.call('device', { action: 'info' }, function(r) {
+      log('<strong>device</strong> → ' + r.manufacturer + ' ' + r.model + '<br>Android ' + r.version + ' (SDK ' + r.sdk + ')');
+    });
+  } else {
+    log('<strong>device</strong> → (only works inside APK)');
+  }
 }
 
-// Utils
-function esc(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function ea(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
-function fmtShort(ts){var d=new Date(ts);return(d.getMonth()+1)+'/'+d.getDate()+' '+pad(d.getHours())+':'+pad(d.getMinutes())}
-function pad(n){return n<10?'0'+n:''+n}
-function toFa(n){return(''+n).replace(/\d/g,function(d){return'۰۱۲۳۴۵۶۷۸۹'[d]})}
-function fmtDue(due){
-  if(!due) return null;
-  var p=due.split('-'), dd=new Date(+p[0],+p[1]-1,+p[2]);
-  var today=new Date(); today.setHours(0,0,0,0);
-  var tom=new Date(today); tom.setDate(today.getDate()+1);
-  if(dd<today) return{text:'دیروقت!',cls:'ov'};
-  if(dd.getTime()===today.getTime()) return{text:'امروز',cls:'td'};
-  if(dd.getTime()===tom.getTime()) return{text:'فردا',cls:''};
-  return{text:(dd.getMonth()+1)+'/'+dd.getDate(),cls:''};
+function doTheme() {
+  dark = !dark;
+  document.body.style.background = dark ? '#f8fafc' : '#0f172a';
+  document.body.style.color      = dark ? '#0f172a' : '#f1f5f9';
+  log('<strong>theme</strong> → ' + (dark ? 'light' : 'dark'));
 }
-function emptyMsg(q){
-  if(q) return['🔍','نتیجه‌ای پیدا نشد','با کلمات دیگری جستجو کن'];
-  if(filter==='active') return['🎉','همه کارها انجام شده!','استراحت کن 😄'];
-  if(filter==='completed') return['⏳','هنوز کاری انجام نشده','برو سراغ وظایفت!'];
-  return['📭','هنوز وظیفه‌ای نداری!','اولین کار خود را اضافه کن'];
-}
-
-// Build static UI
-function buildPri(){
-  document.getElementById('priRow').innerHTML=PK.map(function(k){
-    return '<button class="seg-btn'+(addPri===k?' '+PRIS[k].cls:'')+'" data-p="'+k+'" onclick="setPri(\''+k+'\')">'+PRIS[k].icon+' '+PRIS[k].label+'</button>';
-  }).join('');
-}
-function buildCat(){
-  document.getElementById('catRow').innerHTML=CK.map(function(k){
-    var s=addCat===k;
-    return '<button class="cat-chip'+(s?' sel':'')+'" data-c="'+k+'" style="'+(s?'border-color:'+CATS[k].color+';color:'+CATS[k].color:'')+'" onclick="setCat(\''+k+'\')">'+CATS[k].icon+' '+CATS[k].label+'</button>';
-  }).join('');
-}
-function buildCatFilter(){
-  document.getElementById('cfRow').innerHTML=
-    '<button class="cf-chip on" data-cf="all" onclick="setCatFilter(\'all\')">🔵 همه</button>'+
-    CK.map(function(k){
-      return '<button class="cf-chip" data-cf="'+k+'" onclick="setCatFilter(\''+k+'\')">'+CATS[k].icon+' '+CATS[k].label+'</button>';
-    }).join('');
-}
-function initHeader(){
-  var h=new Date().getHours();
-  var g=h<6?'شب بخیر!':h<12?'صبح بخیر!':h<17?'ظهر بخیر!':h<21?'عصر بخیر!':'شب بخیر!';
-  document.getElementById('hdrGreet').textContent=g;
-  var days=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
-  var d=new Date();
-  document.getElementById('hdrDate').textContent=days[d.getDay()]+'، '+(d.getMonth()+1)+'/'+d.getDate();
-}
-
-// Bridge
-document.addEventListener('html2apkready',function(){
-  html2apk.device.getInfo(function(info){
-    var bar=document.getElementById('devBar');
-    bar.style.display='flex';
-    document.getElementById('devMdl').textContent='📱 '+info.manufacturer+' '+info.model;
-    document.getElementById('devOS').textContent='🤖 Android '+info.version;
-  });
-  html2apk.network.isOnline(function(on){
-    var c=document.getElementById('netChip');
-    c.style.display='block';
-    c.textContent=on?'📶 آنلاین':'📴 آفلاین';
-  });
-});
-
-// Boot
-applyTheme();
-initHeader();
-document.getElementById('sortSel').value=sortBy;
-buildPri(); buildCat(); buildCatFilter();
-render();
 </script>
 </body>
 </html>
